@@ -13,18 +13,18 @@ func main() {
 
 	totalSum := 0
 	for _, groupChoice := range strings.Split(string(all), "\n\n") {
-		choices := map[string]bool{}
+		choices := map[int32]bool{}
 		for i, peopleChoice := range strings.Split(groupChoice, "\n") {
 			if i == 0 { // first guy
 				for _, char := range peopleChoice {
-					choices[string(char)] = true
+					choices[char] = true
 				}
 			} else { // others
 				old := choices
-				choices = map[string]bool{}
+				choices = map[int32]bool{}
 				for _, char := range peopleChoice {
-					if old[string(char)] {
-						choices[string(char)] = true
+					if old[char] {
+						choices[char] = true
 					}
 				}
 			}
