@@ -16,6 +16,7 @@ func main() {
 	stack := []string{"shiny gold"}
 	for len(stack) > 0 {
 		current := stack[0]
+		stack = stack[1:]
 		for _, line := range lines {
 			index := strings.Index(line, current)
 			if index > 0 {
@@ -26,7 +27,6 @@ func main() {
 				}
 			}
 		}
-		stack = stack[1:]
 	}
 
 	fmt.Println("Shiny gold : ", len(seen))
