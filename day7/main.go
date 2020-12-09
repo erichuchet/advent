@@ -18,13 +18,9 @@ func main() {
 		current := stack[0]
 		stack = stack[1:]
 		for _, line := range lines {
-			index := strings.Index(line, current)
-			if index > 0 {
-				container := line[:strings.Index(line, " bag")]
-				if !seen[container] {
-					seen[container] = true
-					stack = append(stack, container)
-				}
+			if strings.Index(line, current) > 0 {
+				stack = append(stack, line[:strings.Index(line, " bag")])
+				seen[stack[len(stack)-1]] = true
 			}
 		}
 	}
