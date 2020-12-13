@@ -1,17 +1,13 @@
 package main
 
 import (
+	"adventj3/file"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"strings"
 )
 
-func main() {
-	open, _ := os.Open("day7/inputs.txt")
-	all, _ := ioutil.ReadAll(open)
-
-	lines := strings.Split(string(all), "\n")
+func main2() {
+	lines := file.ReadLines("day7/inputss.txt")
 	seen := map[string]bool{}
 	stack := []string{"shiny gold"}
 	for len(stack) > 0 {
