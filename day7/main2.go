@@ -17,8 +17,8 @@ func main() {
 	totalBagsNumber := 0
 	for scanner.Scan() || len(bagsPool) > 0 {
 		if scanner.Err() == nil {
-			line := scanner.Text()
-			seen[line[:strings.Index(line, " bag")]] = strings.TrimSpace(strings.Split(line, " contain")[1])
+			split := strings.Split(scanner.Text(), " bags contain ")
+			seen[split[0]] = split[1]
 		}
 
 		good := 0
@@ -26,23 +26,24 @@ func main() {
 		for i, bag := range bagsPool {
 			content, isBagAlreadySeen := seen[bag]
 			if isBagAlreadySeen {
+				if !strings.Contains(content, "no other") {
+					newsBags = append(newsBags, checkInside(content)...)
+				}
+			} else {
 				bagsPool[good] = bagsPool[i]
 				good++
-				if !strings.Contains(content, "no other") {
-					newsBags = append(newsBags, checkInside(strings.Split(content, ","))...)
-				}
 			}
 		}
 		totalBagsNumber += len(newsBags)
-		bagsPool = append(bagsPool[good:], newsBags...)
+		bagsPool = append(bagsPool[:good], newsBags...)
 	}
 	fmt.Println("Shiny gold : ", totalBagsNumber)
 }
 
-func checkInside(splitedContent []string) []string {
+func checkInside(content string) []string {
 	bags := []string{}
-	for _, content := range splitedContent {
-		split := strings.Split(strings.TrimSpace(content), " ")
+	for _, content := range strings.Split(content, ", ") {
+		split := strings.Split(content, " ")
 		number, _ := strconv.Atoi(split[0])
 		bagName := strings.Join(split[1:3], " ")
 		for i := 0; i < number; i++ {
