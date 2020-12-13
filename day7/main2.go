@@ -2,9 +2,9 @@ package main
 
 import (
 	"bufio"
+	"container/list"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -13,51 +13,38 @@ func main() {
 	scanner := bufio.NewScanner(open)
 
 	seen := map[string]string{}
-	bagsPool := []string{"shiny gold"}
+	bagsPool := list.New()
+	bagsPool.PushFront("shiny gold")
 	totalBagsNumber := 0
-	for scanner.Scan() || len(bagsPool) > 0 {
-		if scanner.Err() == nil {
+	for scanner.Scan() || bagsPool.Len() > 0 {
+		if scanner.Err() == nil && scanner.Text() != "" {
 			split := strings.Split(scanner.Text(), " bags contain ")
 			seen[split[0]] = split[1]
 		}
-
-		good := 0
-		newsBags := []string{}
-		for i, bag := range bagsPool {
-			content, isBagAlreadySeen := seen[bag]
-			if isBagAlreadySeen {
-				if !strings.Contains(content, "no other") {
-					newsBags = append(newsBags, checkInside(content)...)
-				}
-			} else {
-				bagsPool[good] = bagsPool[i]
-				good++
+		newsBags := list.New()
+		for bag := bagsPool.Front(); bag != nil; bag = bag.Next() {
+			if content, ok := seen[bag.Value.(string)]; ok {
+				bagsPool.Remove(bag)
+				newsBags.PushFrontList(checkInside(content))
 			}
 		}
-		totalBagsNumber += len(newsBags)
-		bagsPool = append(bagsPool[:good], newsBags...)
+		totalBagsNumber += newsBags.Len()
+		bagsPool.PushFrontList(newsBags)
 	}
 	fmt.Println("Shiny gold : ", totalBagsNumber)
 }
 
-func checkInside(content string) []string {
-	bags := []string{}
-	for _, content := range strings.Split(content, ", ") {
-		split := strings.Split(content, " ")
-		number, _ := strconv.Atoi(split[0])
-		bagName := strings.Join(split[1:3], " ")
-		for i := 0; i < number; i++ {
-			bags = append(bags, bagName)
+func checkInside(content string) *list.List {
+	bags := list.New()
+	if !strings.Contains(content, "no other") {
+		for _, content := range strings.Split(content, ", ") {
+			var n int
+			var a, b string
+			fmt.Sscanf(content, "%d %s %s", &n, &a, &b)
+			for i := 0; i < n; i++ {
+				bags.PushFront(a + " " + b)
+			}
 		}
 	}
 	return bags
 }
-
-//vibrant blue bags contain
-// 4 wavy gray bags, 2 light turquoise bags, 1 drab bronze bag, 4 wavy cyan bags.
-
-//wavy purple bags contain
-// 3 dotted olive bags, 2 dull lime bags.
-
-//wavy plum bags contain
-// 3 posh chartreuse bags.
