@@ -1,13 +1,14 @@
 package main
 
 import (
-	"adventj3/file"
 	"fmt"
 	"strings"
+
+	"metanet.fr/adventj3/file"
 )
 
-func main2() {
-	lines := file.ReadLines("day7/inputss.txt")
+func main() {
+	lines := file.ReadLines("../inputs.txt")
 	seen := map[string]bool{}
 	stack := []string{"shiny gold"}
 	for len(stack) > 0 {

@@ -9,7 +9,7 @@ import (
 var bags = map[string]string{}
 
 func main() {
-	file, _ := ioutil.ReadFile("day7/inputs.txt")
+	file, _ := ioutil.ReadFile("../inputs.txt")
 	for _, line := range strings.Split(string(file), "\n") {
 		split := strings.Split(line, " bags contain ")
 		bags[split[0]] = split[1]
