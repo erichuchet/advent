@@ -1,50 +1,31 @@
 package main
 
 import (
-	"bufio"
-	"container/list"
 	"fmt"
-	"os"
+	"io/ioutil"
 	"strings"
 )
 
-func main() {
-	open, _ := os.Open("day7/inputs.txt")
-	scanner := bufio.NewScanner(open)
+var bags = map[string]string{}
 
-	seen := map[string]string{}
-	bagsPool := list.New()
-	bagsPool.PushFront("shiny gold")
-	totalBagsNumber := 0
-	for scanner.Scan() || bagsPool.Len() > 0 {
-		if scanner.Err() == nil && scanner.Text() != "" {
-			split := strings.Split(scanner.Text(), " bags contain ")
-			seen[split[0]] = split[1]
-		}
-		newsBags := list.New()
-		for bag := bagsPool.Front(); bag != nil; bag = bag.Next() {
-			if content, ok := seen[bag.Value.(string)]; ok {
-				bagsPool.Remove(bag)
-				newsBags.PushFrontList(checkInside(content))
-			}
-		}
-		totalBagsNumber += newsBags.Len()
-		bagsPool.PushFrontList(newsBags)
+func main() {
+	file, _ := ioutil.ReadFile("day7/inputs.txt")
+	for _, line := range strings.Split(string(file), "\n") {
+		split := strings.Split(line, " bags contain ")
+		bags[split[0]] = split[1]
 	}
-	fmt.Println("Shiny gold : ", totalBagsNumber)
+	fmt.Println("Shiny gold contains : ", checkInside(bags["shiny gold"]))
 }
 
-func checkInside(content string) *list.List {
-	bags := list.New()
+func checkInside(content string) int {
+	sum := 0
 	if !strings.Contains(content, "no other") {
 		for _, content := range strings.Split(content, ", ") {
-			var n int
-			var a, b string
-			fmt.Sscanf(content, "%d %s %s", &n, &a, &b)
-			for i := 0; i < n; i++ {
-				bags.PushFront(a + " " + b)
-			}
+			var number int
+			var color1, color2 string
+			_, _ = fmt.Sscanf(content, "%d %s %s", &number, &color1, &color2)
+			sum += number + number*checkInside(bags[color1+" "+color2])
 		}
 	}
-	return bags
+	return sum
 }
